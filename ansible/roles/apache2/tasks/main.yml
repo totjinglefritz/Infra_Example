@@ -1,0 +1,58 @@
+---
+# Set up apache2
+- name: install apache2
+  async: 60
+  poll: 15
+  apt:
+    name: apache2
+    state: present
+    disable_gpg_check: yes
+# set appropriate modules for ssl and proxy
+- name: set APACHE_MODULES
+  notify:
+    - apache restart
+  lineinfile:
+    path: /etc/sysconfig/apache2
+    regexp: '^APACHE_SERVER_FLAGS='
+    line: APACHE_SERVER_FLAGS="SSL"
+# set appropriate flags for ssl and proxy
+- name: set APACHE_SERVER_FLAGS
+  notify:
+    - apache restart
+  lineinfile:
+    path: /etc/sysconfig/apache2
+    regexp: '^APACHE_MODULES='
+    line: APACHE_MODULES="authz_host alias mime log_config env setenvif status proxy proxy_http proxy_ajp reqtimeout rewrite ssl headers access_compat list dir authz_core"
+# set apache2 to listen on ssl port
+- name: set hostname to listen.conf
+  notify:
+    - apache restart
+  lineinfile:
+    path: /etc/apache2/listen.conf
+    regexp: '^NameVirtualHost'
+    line: NameVirtualHost {{inventory_hostname}}:443
+# Increased prefork min & max settings
+- name: set server-tuning.conf
+  notify:
+    - apache restart
+  copy:
+    src: server-tuning.conf
+    dest: /etc/apache2/server-tuning.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+# Increase SSLSessionCacheTimeout
+- name: set ssl-global.conf
+  notify:
+    - apache restart
+  copy:
+    src: ssl-global.conf
+    dest: /etc/apache2/ssl-global.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+- name: apache2 certificates
+  debug:
+    msg:  "go to /root/sslCertCreation per https://wiki.wdf.sap.corp/wiki/x/-yFidw and set up certificates"

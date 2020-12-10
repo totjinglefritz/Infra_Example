@@ -1,0 +1,41 @@
+---
+# Set up esri proxy server
+
+# set up required cache directory
+- name: create CacheRoot directory
+  file:
+    path: /var/lib/jenkins/nginx/cache
+    state: directory
+    owner: nginx
+    group: root
+    mode: '0755'
+
+# Rename default default.conf
+- name: stat default.conf
+  stat: path=/etc/nginx/conf.d/default.conf
+  register: default_conf
+- name: rename default.conf
+  command: mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf_
+  when: default_conf.stat.exists
+
+# copy nginx.conf
+- name: set nginx.conf
+  copy:
+    src: ../files/nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+
+# configure nginx virtual host for proxy
+- name: copy conf.d
+  template:
+    src: "{{item}}"
+    dest: /etc/nginx/conf.d/
+    mode: 0644
+    owner: root
+    group: root
+  become: yes
+  with_fileglob:
+    - ../templates/*

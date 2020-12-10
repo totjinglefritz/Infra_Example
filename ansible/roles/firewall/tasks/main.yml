@@ -1,0 +1,67 @@
+---
+# $ANSIBLE_ROOT/roles/firewall/tasks/main.yml
+# PURPOSE
+# This task sets up the client side firewall
+#    on a SLES15 node.
+#    As we are only required to set up a client side firewall
+#    on Jenkins head nodes, and the Jenkins head nodes currently are all
+#    running SLES15, the operations to run a client side firewall
+#    on SLES12 are undefined at this time.
+# REFERENCE
+#    https://sapjira.wdf.sap.corp/browse/FPA53-8561
+#
+######
+- name: remind operator to have console before installing firewall
+  tags: iamwarningyou
+  pause:
+    prompt: "NOTE: confirm you have console access to a node before installing a firewall"
+    seconds: 60
+- name: install firewalld
+  package:
+    name: firewalld
+    state: present
+# To configure the firewall, we have to start the service
+- name: start firewalld service
+  service:
+    name: firewalld
+    state: started
+- name: enable host list for bastion
+  firewalld:
+    zone: trusted
+    service: ssh
+    # TODO: allow a strict host list
+    source: 192.168.2.0/24 # REPLACE with real value
+    permanent: true
+    state: enabled
+    immediate: yes
+    when: host_type == "bastion"
+- name: enable ssh to web host
+  firewalld:
+    service: ssh
+    source: 192.168.3.3. # REPLACE with real IP for Bastion host
+    permanent: yes
+    immediate: yes
+    state: enabled
+    when: host_type == "web"
+- name: configure web services
+  firewalld:
+    service: "{{ item.service_name }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  with_items:
+    - service_name: apache2       # web server access
+    - service_name: dhcpv6-client # required by admin
+- name: configure ports
+  firewalld:
+    port: "{{ item.port_number }}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  with_items:
+    - port_number: "443/tcp"      # https access
+- name: ensure firewalld service starts on boot
+  service:
+    name: firewalld
+    enabled: yes
+  notify: Start Firewalld

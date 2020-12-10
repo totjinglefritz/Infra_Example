@@ -1,0 +1,35 @@
+---
+# play_provision_webhost
+# PURPOSE
+# Provision an apache host
+#
+# PREREQUISITES
+# 1. machine is imaged by Terraform
+# 2. Verify Ansible works correctly on this distro. E.g.
+#  - ansible_python_interpreter:  /usr/bin/python3
+# ASSUMPTIONS
+# Assumes you are calling this playbook from within the base (root) directory
+#    for the relative references to work correctly, e.g.
+# $ ansible-playbook  -i ./inventory.yml  --syntax-check  \
+#       --check   --limit <FQDN> --tags firewall \
+#       playbooks/play_provision_webhost.yml
+#
+# MAIN
+#  gather_facts: no  # uncomment to drop a step and speed debugging
+- hosts: all
+  vars:
+  - ansible_python_interpreter:  /usr/bin/python3
+  - host_type: "web"
+  tasks:
+  # Force user to use --limit when running this playbook
+  - fail:
+      msg: "you must use -l or --limit"
+    when: ansible_limit is not defined
+  # Configure apache
+  - import_role:
+      name: apache2
+    tags: apache2
+  # Configure firewall
+  - import_role:
+      name: firewall
+    tags: firewall

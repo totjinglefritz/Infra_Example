@@ -1,0 +1,19 @@
+---
+# PURPOSE
+# This task updates the searchlist and nameservers on /etc/resolv.conf
+- name: create a backup of the current /etc/sysconfig/network/config file
+  command: cp /etc/sysconfig/network/config /etc/sysconfig/network/config.bak
+- replace: 
+    path: /etc/sysconfig/network/config
+    regexp: '^NETCONFIG_DNS_STATIC_SEARCHLIST=.*$'
+    replace: 'NETCONFIG_DNS_STATIC_SEARCHLIST="dhcp.pgdev.sap.corp dhcp.van.sap.corp dhcp.wdf.sap.corp van.sap.corp wdf.sap.corp pgdev.sap.corp"'
+- replace: 
+    path: /etc/sysconfig/network/config
+    regexp: '^NETCONFIG_DNS_POLICY=.*$'
+    replace: 'NETCONFIG_DNS_POLICY="auto"'
+- replace:
+    path: /etc/sysconfig/network/config
+    regexp: '^NETCONFIG_DNS_STATIC_SERVERS=.*$'
+    replace: 'NETCONFIG_DNS_STATIC_SERVERS="10.160.16.99 10.17.122.10 10.17.122.170 10.17.220.71 10.17.220.72 10.17.220.80 10.48.130.100"'
+- name: reload netconfig
+  command: sudo su -c 'netconfig update -f'

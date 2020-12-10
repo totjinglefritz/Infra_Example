@@ -1,0 +1,32 @@
+---
+## Setup Baseline nginx
+##NOTE To add additional changes specific to use-case, create a separate yml file
+
+## To run the main.yml from a playbook
+##   - import_role:
+##      name: nginx
+
+# Reccomended to use nginx key https://www.nginx.com/blog/setting-up-nginx/
+- name: Download nginx key
+  command: wget http://nginx.org/keys/nginx_signing.key
+- name: Add nginx key
+  command: rpm --import nginx_signing.key
+
+# # Add nginx repo from http://nginx.org/packages/debian/
+- name: Add NGINX Repository
+  apt_repository:
+    repo: deb https://nginx.org/packages/debian/ squeeze ngix
+    state: present
+- name: install nginx
+  async: 60
+  poll: 15
+  apt:
+    name: nginx
+    state: present
+- name: nginx restart
+  tags: restart
+  become: yes
+  service:
+    name: nginx
+    enabled: yes
+    state: restarted

@@ -1,0 +1,7 @@
+---
+# What hosts do we want on an allowed list?
+# Note that firewalld expects IP addresses to avoid DNS lookups
+# DNS Names would only be included here only to help humans.
+#allowed:
+#  # note that python dictionary keys cannot easily contain a period
+ 

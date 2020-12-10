@@ -1,0 +1,5 @@
+---
+# EXAMPLE vars file for nginx crashdump setup
+# Edit, rename this file to crashdump.yml and run playbook
+nginx_crashdump_password : "replace_with_real_password"
+

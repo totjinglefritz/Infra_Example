@@ -1,0 +1,10 @@
+---
+### inventory.yml
+### Ansible managed
+all:
+    hosts:
+      # Add hosts here
+    vars:
+      # Find a service account to use here, not an iNumber
+      ansible_user: "{{ lookup('env', 'USER') }}"
+      ansible_become: yes

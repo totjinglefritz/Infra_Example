@@ -1,0 +1,17 @@
+---
+# install packages on generic host using generic package manager
+- name: install_packages
+  package: 
+    name: "{{ item.name }}"
+    state: present
+  with_items:
+# NOTE: please do your coworkers a favour
+# and keep these lists sorted alphabetically.
+# Thanks! 
+    - name: autofs  # package is called nfs-utils in Red Hat. Here be trouble...
+    - name: git
+    - name: lvm2
+    - name: mtr
+#   - name: terraform # As of 2019-08-29 there is no terraform apt package
+    - name: tmux
+    - name: vim
