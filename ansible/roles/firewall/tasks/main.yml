@@ -2,13 +2,6 @@
 # $ANSIBLE_ROOT/roles/firewall/tasks/main.yml
 # PURPOSE
 # This task sets up the client side firewall
-#    on a SLES15 node.
-#    As we are only required to set up a client side firewall
-#    on Jenkins head nodes, and the Jenkins head nodes currently are all
-#    running SLES15, the operations to run a client side firewall
-#    on SLES12 are undefined at this time.
-# REFERENCE
-#    https://sapjira.wdf.sap.corp/browse/FPA53-8561
 #
 ######
 - name: remind operator to have console before installing firewall

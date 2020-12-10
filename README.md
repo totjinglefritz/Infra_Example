@@ -1,5 +1,7 @@
 # Overview
 
+![Overview](img/overview.png)
+
 This repository includes Ansible and Terraform templates to create a primitive
 bastion host and a web server. These hosts are very basic in their
 configuration.
@@ -40,7 +42,8 @@ This host should:
   - Use a firewall service at the network entry point to avoid needing to 
     maintain multiple firewall on a host-level basis
   - Regular security scans to probe vulnerabilities
-  - Patch and update on a regular basis. This may include
+  - Patch and update on a regular basis. This may include spinning
+    up new instances with new OS images instead of patching in place.
 
 * Balance cost and availability:
   - Use monitoring and automation where possible to collect usage data

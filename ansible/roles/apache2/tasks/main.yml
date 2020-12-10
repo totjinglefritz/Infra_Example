@@ -53,6 +53,3 @@
     group: root
     mode: 0644
     backup: yes
-- name: apache2 certificates
-  debug:
-    msg:  "go to /root/sslCertCreation per https://wiki.wdf.sap.corp/wiki/x/-yFidw and set up certificates"
